@@ -8,7 +8,7 @@ package main_release
 
 import "core:log"
 import "core:os"
-import "core:os/os2"
+import os_old "core:os/old"
 import "base:runtime"
 import "core:mem"
 import game ".."
@@ -19,16 +19,16 @@ _ :: mem
 USE_TRACKING_ALLOCATOR :: #config(USE_TRACKING_ALLOCATOR, false)
 
 main :: proc() {
-	if exe_dir, exe_dir_err := os2.get_executable_directory(context.temp_allocator); exe_dir_err == nil {
-		os2.set_working_directory(exe_dir)
+	if exe_dir, exe_dir_err := os.get_executable_directory(context.temp_allocator); exe_dir_err == nil {
+		os.set_working_directory(exe_dir)
 	}
 
 	mode: int = 0
 	when ODIN_OS == .Linux || ODIN_OS == .Darwin {
-		mode = os.S_IRUSR | os.S_IWUSR | os.S_IRGRP | os.S_IROTH
+		mode = os_old.S_IRUSR | os_old.S_IWUSR | os_old.S_IRGRP | os_old.S_IROTH
 	}
 
-	logh, logh_err := os.open("log.txt", (os.O_CREATE | os.O_TRUNC | os.O_RDWR), mode)
+	logh, logh_err := os.open("log.txt", (os.O_CREATE | os.O_TRUNC | os.O_RDWR), {.Read_User})
 
 	if logh_err == os.ERROR_NONE {
 		os.stdout = logh
